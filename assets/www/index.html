@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>StreetEyes</title>
+<link rel="stylesheet" href="jquery.mobile/jquery.mobile-1.1.0-rc.1.min.css" type="text/css" />
+<link rel="stylesheet" href="css/pgandjqm-style-override.css" type="text/css" />
+<link rel="stylesheet" href="css/custom.css" type="text/css" />
+<script type="text/javascript" charset="utf-8" src="jquery.mobile/jquery-1.7.1.min"></script>
+<script type="text/javascript" charset="utf-8">
+	$(document).bind("mobileinit", function() {
+		// Make your jQuery Mobile framework configuration changes here!
+		$.support.cors = true;
+		$.mobile.allowCrossDomainPages = true;
+		$.mobile.defaultPageTransition = 'none'; // docs say defaultTransition but are wrong!
+	});
+</script>
+<script type="text/javascript" charset="utf-8" src="jquery.mobile/jquery.mobile-1.1.0-rc.1.min"></script>
+<script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.1.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDHwAJbB8jkEMvSkZpGBDxSB1fK5MpGfNQ&sensor=false"></script>
+<script type="text/javascript" charset="utf-8" src="js/custom.js"></script>
+</head>
+
+<body>
+
+
+
+
+
+<div data-role="page" id="broadcaster" data-theme="a">
+
+<DIV data-role="header" data-theme="a" data-position="fixed">
+
+<TABLE BORDER=0 WIDTH="100%" CELLPADDING=0 CELLSPACING=0><TR>
+	<TD CLASS="title" ALIGN="left"> <A HREF="./index.html"><B>StreetEyes</B></A></TD>
+	<TD VALIGN="middle" ALIGN="right"><a href="#search" data-role="button" data-mini="true" data-icon="search"
+		data-theme="e" data-inline="true" data-iconpos="notext" style="vertical-align: middle;" data-mini="true"
+		CLASS="link_search">Search</a> <a href="#settings" data-role="button" data-icon="gear" data-theme="e"
+		data-inline="true" data-iconpos="notext" style="vertical-align: middle;">Settings</a></TD>
+</TR></TABLE>
+
+<div data-role="navbar" class="ui-body-a" data-mini="true">
+<ul>
+<LI><A HREF="#broadcaster" class="ui-btn-active broadcastButton" data-theme="e">Broadcast Now!</A></LI>
+<li><a href="#streams" ID="link_viewer" data-theme="e">View Streams</a></li>
+</ul>
+</div> <!-- /navbar -->
+
+</DIV> <!-- /header -->
+
+		<div data-role="content" data-theme="a">
+		<BR />
+			<!--  insert external div -->
+			<div id="lastUpdate"></div><BR />
+
+			<div id="geolocation" STYLE="text-align: center; margin: auto;">Finding geolocation...</div>
+			
+			<FORM NAME="updateForm" ID="updateForm" METHOD="get" ACTION="http://benturner.com/streeteyes/statusupdate.php">
+			<input type="hidden" name="updatePhoto" id="updatePhoto" VALUE="" />
+			<input type="hidden" name="updateGeoLat" id="updateGeoLat" VALUE="" />
+			<input type="hidden" name="updateGeoLon" id="updateGeoLon" VALUE="" />
+			<input type="hidden" name="updateBroadcast" id="updateBroadcast" VALUE="true" />
+			<input type="hidden" name="updateNick" id="updateNick" value="Ben" />
+			
+			<div data-role="fieldcontain">
+			<input type="text" placeholder="What are you seeing?" name="updateStatus" id="updateStatus" data-theme="a" value="" />
+			</div>
+			<BR />
+			<!--
+			<BR />
+			<label class="labelInput">
+			<span>Your Ustream URL:</span><input type="text" name="updateUstream" id="updateUstream" data-theme="a" value="" />
+			</label>
+			<BR />
+			Attach photo:<BR /><small>
+			<button onclick="capturePhoto();" class="camera" data-mini="true">Capture Photo</button>
+					<button onclick="getPhoto(pictureSource.PHOTOLIBRARY);"
+						class="camera" data-mini="true">Gallery</button>
+					<button onclick="capturePhotoEdit();" class="camera">Capture
+						Editable Photo</button>
+					<button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);"
+						class="camera">From Photo Album</button>
+						<img style="display: none; width: 60px; height: 60px;" id="smallImage"
+					src="" /> <img style="display: none;" id="largeImage" src="" /><BR />
+				</small>
+			</div> -->
+
+			<CENTER>
+				<a href="" data-role="button" ID="statusUpdate" data-ajax="false" CLASS="updateButton" data-inline="true" data-theme="b">send update</a>
+			</CENTER>
+			
+			</FORM>
+			
+			<DIV ID="sentSU"></DIV>
+
+		</DIV> <!-- /content -->
+
+	</div> <!-- /page -->
+
+
+
+
+
+
+
+
+	<div data-role="page" id="streams" data-theme="a">
+
+		<DIV data-role="header" data-theme="a" data-position="fixed">
+
+			<TABLE BORDER=0 WIDTH="100%" CELLPADDING=0 CELLSPACING=0>
+				<TR>
+					<TD CLASS="title" ALIGN="left"> <A HREF="./index.html"><B>StreetEyes</B></A></TD>
+					<TD VALIGN="middle" ALIGN="right"><a href="#search"
+						data-role="button" data-mini="true" data-icon="search"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;" data-mini="true" CLASS="link_search">Search</a> <a
+						href="#settings" data-role="button" data-icon="gear"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;">Settings</a></TD>
+				</TR>
+			</TABLE>
+
+			<div data-role="navbar" class="ui-body-a" data-mini="true">
+				<ul>
+					<LI><A HREF="#broadcaster" class="broadcastButton" data-theme="e">Broadcast Now!</A></LI>
+					<li><a href="#streams" ID="link_viewer" data-theme="e" class="ui-btn-active">View Streams</a></li>
+				</ul>
+			</div>
+			<!-- /navbar -->
+
+		</DIV>
+		<!-- /header -->
+
+		<div data-role="content">
+		
+	<div id="requests" style="display: none;"><div id="requestsDiv"></div></div>
+
+	<div id="public" style="display: none;">
+		<BR />
+		No public streams yet.
+	</div>
+	<div id="active" style="display: block;">
+		<BR />
+		
+<FORM NAME="chatForm" ID="chatForm" METHOD="post" data-ajax="false" ACTION="">
+<INPUT TYPE="hidden" ID="chatID" NAME="chatID" VALUE=1 />
+<INPUT TYPE="hidden" ID="chatBroadcast" NAME="chatBroadcast" VALUE="true" />
+<TABLE BORDER=0 ID="chatTable"><TR><TD>
+Say something:<BR />
+<INPUT TYPE="text" NAME="chatMsg" ID="chatMsg" />
+</TD><TD>
+Your nick/handle/name:<BR />
+<INPUT TYPE="text" NAME="chatNick" ID="chatNick" />
+</TD></TR></TABLE>
+<INPUT TYPE="submit" ID="chatSubmit" NAME="chatSubmit" VALUE="send message" data-mini="true" />
+</FORM>
+<BR />
+		
+<div id="streamContainer"></div>
+
+	</div> <!-- /active -->
+		</DIV> <!-- /content -->
+		
+		<DIV data-role="footer" data-theme="a" data-position="fixed">
+		
+		<div data-role="navbar">
+	<ul>
+		<li><a id="buttonRequests" HREF="">Requests</a></li>
+		<li><a id="buttonPublic" HREF="">Public</a></li>
+		<li><a id="buttonActive" HREF="">Active</a></li>
+	</ul>
+</div><!-- /navbar -->
+
+</div> <!-- /footer -->
+
+	</div>
+	<!-- /page -->
+
+
+
+
+
+
+
+
+	<div data-role="page" id="settings" data-theme="a">
+
+		<DIV data-role="header" data-theme="a" data-position="fixed">
+
+			<TABLE BORDER=0 WIDTH="100%" CELLPADDING=0 CELLSPACING=0>
+				<TR>
+					<TD CLASS="title" ALIGN="left"> <A HREF="./index.html"><B>StreetEyes</B></A></TD>
+					<TD VALIGN="middle" ALIGN="right"><a href="#search"
+						data-role="button" data-mini="true" data-icon="search"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;" data-mini="true" CLASS="link_search">Search</a> <a
+						href="#settings" data-role="button" data-icon="gear"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;" class="ui-btn-active">Settings</a></TD>
+				</TR>
+			</TABLE>
+
+			<div data-role="navbar" class="ui-body-a" data-mini="true">
+				<ul>
+					<LI><A HREF="#broadcaster" data-theme="e" class="broadcastButton">Broadcast Now!</A></LI>
+					<li><a href="#streams" ID="link_viewer" data-theme="e">View Streams</a></li>
+				</ul>
+			</div>
+			<!-- /navbar -->
+
+		</DIV>
+		<!-- /header -->
+
+		<div data-role="content">
+
+			<FORM METHOD="get" ACTION="" NAME="formProfile" ID="formProfile">
+			<BR /><H3>YOUR PROFILE</H3>
+			<BR />
+			<input type="text" placeholder="Your name?" name="profileName" id="profileName" data-theme="a" value="" />
+			<BR />
+			<textarea name="profileBio" placeholder="Your bio?" id="profileBio" data-theme="a" rows=3 cols=30></textarea>
+<!--
+			<div data-role="fieldcontain">
+				<legend>App Settings</legend>
+				<fieldset data-role="controlgroup">
+					<input type="checkbox" name="checkbox-1a" id="checkbox-1a"
+						class="custom" /> <label for="checkbox-1a">Text
+						updates/tweets/SMS</label> <input type="checkbox" name="checkbox-2a"
+						id="checkbox-2a" class="custom" /> <label for="checkbox-2a">Live
+						video</label> <input type="checkbox" name="checkbox-3a" id="checkbox-3a"
+						class="custom" /> <label for="checkbox-3a">Photos</label> <input
+						type="checkbox" name="checkbox-4a" id="checkbox-4a" class="custom" />
+					<label for="checkbox-4a">Recorded video</label>
+				</fieldset>
+			</div>
+-->
+
+			<CENTER>
+				<a href="buttons-types.html" data-role="button"
+					data-transition="fade" CLASS="updateButton" data-inline="true"
+					data-theme="b">update settings</a>
+			</CENTER>
+			</FORM>
+
+		</DIV>
+		<!-- end content-page -->
+
+	</div>
+	<!-- /page -->
+
+
+
+
+
+	<div data-role="page" id="search" data-theme="a" style="width: 100%; height: 100%;">
+
+		<DIV data-role="header" data-theme="a" data-position="fixed">
+
+			<TABLE BORDER=0 WIDTH="100%" CELLPADDING=0 CELLSPACING=0>
+				<TR>
+					<TD CLASS="title" ALIGN="left"> <A HREF="./index.html"><B>StreetEyes</B></A></TD>
+					<TD VALIGN="middle" ALIGN="right"><a href="#search" CLASS="link_search"
+						data-role="button" data-mini="true" data-icon="search"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;" data-mini="true" class="ui-btn-active">Search</a> <a
+						href="#settings" data-role="button" data-icon="gear"
+						data-theme="e" data-inline="true" data-iconpos="notext"
+						style="vertical-align: middle;">Settings</a></TD>
+				</TR>
+			</TABLE>
+
+			<div data-role="navbar" class="ui-body-a" data-mini="true">
+				<ul>
+					<LI><A HREF="#broadcaster" data-theme="e" class="broadcastButton">Broadcast Now!</A></LI>
+					<li><a href="#streams" ID="link_viewer" data-theme="e">View Streams</a></li>
+				</ul>
+			</div>
+			<!-- /navbar -->
+
+		</DIV>
+		<!-- /header -->
+
+		<div data-role="content" STYLE="width: 90%; height: 100%;">
+
+			<BR />
+				<H3>Location of Active Eyes</H3><BR />
+				<div id="map_canvas" style="width: 90%; height: 250px"></div>
+				<BR /><!--
+				<label class="labelInput"><span>Change location?</span><input type="search" name="viewLocation" id="viewLocation" data-theme="a" value="" /></label>
+				<a href="#search"
+						data-role="button" data-transition="fade" CLASS="updateButton"
+						data-inline="true" data-theme="a" STYLE="font-size: 8pt;">look
+						up location</a> 
+						<BR /><BR /> -->
+			<FORM NAME="viewForm" ID="viewForm" METHOD="post" ACTION="http://benturner.com/streeteyes/newviewrequest.php">
+			<input type="text" name="viewWhat" id="viewWhat" value="" data-role="text" placeholder="What do you want to see?" class="text ui-widget-content ui-corner-all" />
+			<BR />
+			
+			<TEXTAREA name="viewInstructions" id="viewInstructions" data-role="text" COLS=25 ROWS=3 placeholder="Detailed instructions?" class="text ui-widget-content ui-corner-all"></TEXTAREA>
+			<BR /><BR />
+			<!--
+			<BR />
+				<div data-role="fieldcontain">
+					What multimedia do you want broadcasted?
+					<fieldset data-role="controlgroup">
+						<input type="checkbox" name="viewMedia" id="viewMedia1"
+							class="custom" /> <label for="viewMedia1">Text
+							updates/tweets/SMS</label> <input type="checkbox" name="viewMedia"
+							id="viewMedia2" class="custom" /> <label for="viewMedia2">Live
+							video</label> <input type="checkbox" name="viewMedia" id="viewMedia3"
+							class="custom" /> <label for="viewMedia3">Photos</label> <input
+							type="checkbox" name="viewMedia" id="viewMedia4" class="custom" />
+						<label for="viewMedia4">Recorded video</label>
+					</fieldset> -->
+					
+					<input type="text" name="viewUser" id="viewUser" data-role="text" value="" placeholder="Send request to:" class="text ui-widget-content ui-corner-all" />
+				<BR />
+
+				<CENTER>
+					<INPUT type="submit" id="newViewRequest" data-role="button"
+						CLASS="updateButton" data-inline="true"
+						data-theme="b" VALUE="send request" />
+						<DIV ID="sentRequest"></DIV>
+				</CENTER>
+
+			</FORM>
+<!--
+<H3>Search Events</H3>
+<BR />
+
+<div data-role="fieldcontain">
+<input type="search" name="password" id="search" value="" /><BR />			
+<CENTER><input type="submit" value="search" data-theme="b" data-inline="true" /></CENTER>
+</div>
+-->
+
+</DIV> <!-- /content -->
+
+</div> <!-- /page -->
+
+
+<script type="text/javascript">
+
+$(function() {
+	init();
+	$("button").button();
+	$(".button").button();
+	$(".link_search").click(function(){
+		navigator.geolocation.getCurrentPosition(onSuccessWatch, onError, {timeout:10000});
+	});
+	$("#buttonRequests").click(function() {
+		$("#requests").css('display', 'block');
+		$("#active").css('display', 'none');
+		$("#public").css('display', 'none');
+		$("#requestsDiv").load("http://benturner.com/streeteyes/requests.php");
+	});
+	$("#buttonActive").click(function() {
+		$("#requests").css('display', 'none');
+		$("#active").css('display', 'block');
+		$("#public").css('display', 'none');
+		$("#streamContainer").load("http://benturner.com/streeteyes/stream.php");
+	});
+	$("#buttonPublic").click(function() {
+		$("#requests").css('display', 'none');
+		$("#active").css('display', 'none');
+		$("#public").css('display', 'block');
+	});
+	$("#newViewRequest").click(function() {
+		console.log("click fired");
+		var dataString = 'viewLocation=' + $("input#viewLocation").val() + '&viewUser=' + $("input#viewUser").val()
+		+ '&viewWhat=' + $("input#viewWhat").val() + '&viewMedia=' + $("input#viewMedia").val() +
+		'&updateGeoLon=' + $("input#updateGeoLon") + '&updateBroadcast=' + $("#updateBroadcast").val();
+		$.mobile.loadPage("http://benturner.com/streeteyes/newviewrequest_mobile.php?" + dataString, {
+	        reloadPage : true
+	    }); 
+			$("#sentRequest").html("<CENTER>Request sent.</CENTER>");
+		
+		return false;
+	});
+	$(".broadcastButton").click(function() {
+		$("#lastUpdate").load("http://benturner.com/streeteyes/lastupdate.php");
+	});
+	
+	$("#statusUpdate").click(function() {
+		console.log("click fired");
+		/*var dataString = 'updateStatus=' + $("input#updateStatus").val() + '&updateUstream=' + $("input#updateUstream").val()
+		+ '&updatePhoto=' + $("input#updatePhoto").val() + '&updateGeoLat=' + $("input#updateGeoLat").val() +
+		'&updateGeoLon=' + $("input#updateGeoLon") + '&updateBroadcast=' + $("#updateBroadcast").val();
+		$.mobile.loadPage("http://benturner.com/streeteyes/statusupdate.php?" + dataString, {
+	        reloadPage : true
+	    });*/
+		$.ajax({  
+  				type: "POST",  
+  				cache: false,
+  				url: "http://benturner.com/streeteyes/statusupdate.php",  
+  				data: $("#updateForm").serialize(),
+  				success: function() {   
+  	  				$("#sentSU").html("<BR /><CENTER>Update sent.</CENTER>");
+  	  				$("#lastUpdate").load("http://benturner.com/streeteyes/lastupdate.php");
+  				}
+			});
+		
+		return false;
+	});
+	$("#chatSubmit").click(function() {
+		console.log("click fired");
+		var dataString = 'streamID=' + $("input#chatID").val() + '&chatNick=' + $("input#chatNick").val() + '&chatMsg='
+		+ $("input#chatMsg").val() + '&updateBroadcast=false';
+		$.mobile.loadPage("http://benturner.com/streeteyes/sendchat_mobile.php?" + dataString, {
+        	reloadPage : true
+        }); 
+		$("#streamContainer").load("http://benturner.com/streeteyes/stream.php");
+		//$("#streamList").load("http://benturner.com/streeteyes/streams_mobile.php");
+		/* $.ajax({  
+  			type: "POST", 
+  			cache: false,
+  			url: "http://benturner.com/streeteyes/sendchat.php",  
+  			data: dataString,  
+  			success: function() {   
+  				$("#streamList").load("http://benturner.com/streeteyes/streams_mobile.php");
+  			} */ 
+		return false;
+	});
+});
+
+</script>
+
+</body>
+
+</html>
